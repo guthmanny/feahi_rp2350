@@ -1,0 +1,235 @@
+(kicad_sch
+	(version 20260306)
+	(generator "eeschema")
+	(generator_version "10.0")
+	(uuid "198281e5-6379-4766-901d-476e2c5fc052")
+	(paper "A4")
+	(title_block
+		(title "PERIPH-1 (C6+8080) / LCD")
+		(date "2026-09-14")
+		(rev "v0.1-framework")
+		(company "FEAHI / Soran SP-1")
+		(comment 1 "Block diagram — replace placeholders with library symbols")
+	)
+	(lib_symbols)
+	(text "LEDA via PWM + limit resistor"
+		(exclude_from_sim yes)
+		(at 25 34.72 0)
+		(effects
+			(font
+				(size 1.8 1.8)
+			)
+			(justify left bottom)
+		)
+		(uuid "167d7df9-a2df-4bcd-a71c-c09d4bed8123")
+	)
+	(text "2' 240×320 ST7789P3 8080 8-bit"
+		(exclude_from_sim yes)
+		(at 25 28.24 0)
+		(effects
+			(font
+				(size 1.8 1.8)
+			)
+			(justify left bottom)
+		)
+		(uuid "71042054-3afd-4f0c-ac81-abdccc571b1f")
+	)
+	(text "RD → IOVCC (write-only)"
+		(exclude_from_sim yes)
+		(at 25 31.48 0)
+		(effects
+			(font
+				(size 1.8 1.8)
+			)
+			(justify left bottom)
+		)
+		(uuid "7eaf85c4-b187-4eb5-9589-31fae8796e5e")
+	)
+	(text "Keep FPC ≤15mm from C6"
+		(exclude_from_sim yes)
+		(at 25 37.96 0)
+		(effects
+			(font
+				(size 1.8 1.8)
+			)
+			(justify left bottom)
+		)
+		(uuid "8f262c7b-4a66-4a6c-a240-2ddbe7f3e4d8")
+	)
+	(text "J-LCD  FPC for TFT020B107-C0 (JME-01)"
+		(exclude_from_sim yes)
+		(at 25 25 0)
+		(effects
+			(font
+				(size 1.8 1.8)
+			)
+			(justify left bottom)
+		)
+		(uuid "fe4fa2ac-50f0-42ad-817c-e42b58160375")
+	)
+	(hierarchical_label "LCD_DB6"
+		(shape input)
+		(at 30 100 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "0d61d532-d7d3-4f7b-a8f8-b23af4456fa8")
+	)
+	(hierarchical_label "LCD_RS"
+		(shape input)
+		(at 30 115 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "372622b1-50dc-44fe-bde9-f8314f0bdc92")
+	)
+	(hierarchical_label "GND"
+		(shape input)
+		(at 30 140 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "49fe679f-7695-42a7-a598-6d72163dd4fb")
+	)
+	(hierarchical_label "LCD_BL"
+		(shape input)
+		(at 30 130 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "4ff2fa13-eef5-4144-846d-5fa210c36963")
+	)
+	(hierarchical_label "LCD_DB7"
+		(shape input)
+		(at 30 105 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "77b9a31b-2b04-4eaf-9ddb-a4dea27123fb")
+	)
+	(hierarchical_label "LCD_DB3"
+		(shape input)
+		(at 30 85 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "a0fa9bde-fd6f-4334-97d1-e324b4d7c367")
+	)
+	(hierarchical_label "LCD_DB5"
+		(shape input)
+		(at 30 95 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "a8481468-1ef0-4c6d-a8df-856311fad4af")
+	)
+	(hierarchical_label "LCD_CS"
+		(shape input)
+		(at 30 120 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "afb4e85e-f15f-4e80-b98a-6a9cb5e01282")
+	)
+	(hierarchical_label "LCD_RST"
+		(shape input)
+		(at 30 125 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "b2d79421-4586-497c-97c6-267bc5f8929a")
+	)
+	(hierarchical_label "+3V3"
+		(shape input)
+		(at 30 135 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "ba0831cc-87d7-456e-a3c8-ce50b083ac50")
+	)
+	(hierarchical_label "LCD_DB0"
+		(shape input)
+		(at 30 70 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "cd1e3db4-1861-431a-b74f-d0494b778c6e")
+	)
+	(hierarchical_label "LCD_WR"
+		(shape input)
+		(at 30 110 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "d00c105e-df6a-447f-b449-ad0ed4c41fac")
+	)
+	(hierarchical_label "LCD_DB2"
+		(shape input)
+		(at 30 80 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "f15182a6-7cba-4af5-be5e-a65770f06dd1")
+	)
+	(hierarchical_label "LCD_DB4"
+		(shape input)
+		(at 30 90 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "f36dd74e-5054-4992-b3b7-4914e77b5411")
+	)
+	(hierarchical_label "LCD_DB1"
+		(shape input)
+		(at 30 75 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "f9afd9af-185a-4c2f-8a90-eb06add21671")
+	)
+)

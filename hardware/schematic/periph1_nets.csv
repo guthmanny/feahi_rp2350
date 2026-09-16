@@ -1,0 +1,32 @@
+net,class,from,to,cbi_pin,notes
+VBAT,power,BAT+ PMIC,CBI-1/2,1-2,3.0-4.2V
++5V,power,Boost/LDO,CBI-3,3,Periph → optional Core sense
++3V3,power,CBI-4,C6/MS1808/MS4344,4,Core LDO feeds logic
+GND,power,common,CBI-5..8,5-8,4× stitch
+I2S_MCLK,digital,CBI-9,MS1808+MS4344 MCLK,9,24.576MHz from Core
+I2S_BCLK,digital,CBI-10,MS1808+MS4344 BCLK/SCLK,10,
+I2S_LRCLK,digital,CBI-11,MS1808+MS4344 LRCK,11,
+I2S_DOUT,digital,CBI-12,MS4344 SDIN,12,Core play → DAC
+I2S_DIN,digital,MS1808 DOUT,CBI-13,13,ADC → Core record
+HP_DETECT,digital,TRS jack,CBI-14,14,Insert detect
+SPK_MUTE,digital,CBI-15,Amp ~MUTE,15,Active-low typical
+IPC_TX,digital,CBI-18,C6 GPIO17 (RX),18,Core TX → C6 RX
+IPC_RX,digital,C6 GPIO16 (TX),CBI-19,19,C6 TX → Core RX
+C6_BOOT,digital,CBI-20,C6 GPIO9 + DNP test pad,20,Download strap
+MIDI_TX,digital,CBI-21,MIDI OUT opto,21,From Core
+MIDI_RX,digital,MIDI IN opto,CBI-22,22,To Core
+DEBUG_TX,digital,CBI-23,Test pad,23,Core debug optional
+DEBUG_RX,digital,Test pad,CBI-24,24,
+AUD_BOOT,digital,CBI-25,Test pad (NC on Core-A),25,RP2350 BOOTSEL
+MIC_P,analog,ECM,J01 Mic bias+ coupling,—,Via MS1808 front-end
+MIC_N,analog,ECM ref,GND,—,
+LINE_IN_L,analog,TRS tip,J02,—,Via MS1808
+LINE_IN_R,analog,TRS ring,J02,—,
+LINE_OUT_L,analog,MS4344 OUTL,VOL pot → Amp/TRS,—,
+LINE_OUT_R,analog,MS4344 OUTR,VOL pot → Amp/TRS,—,
+SPK+,analog,Amp output,Speaker,—,
+SPK-,analog,Amp output,Speaker,—,
+I2C_SDA,digital,C6 GPIO6,TCA8418+IS31,—,board-only
+I2C_SCL,digital,C6 GPIO7,TCA8418+IS31,—,board-only
+LCD_DB0..7,digital,C6,TF FPC 7-14,—,8080 board-only
+LCD_CTRL,digital,C6,FPC WR/RS/CS/RST,—,board-only

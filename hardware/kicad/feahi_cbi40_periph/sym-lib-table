@@ -1,0 +1,4 @@
+(sym_lib_table
+  (version 7)
+  (lib (name "feahi") (type "KiCad") (uri "${KIPRJMOD}/../libs/symbols/feahi.kicad_sym") (options "") (descr "FEAHI SP-1 project symbols"))
+)

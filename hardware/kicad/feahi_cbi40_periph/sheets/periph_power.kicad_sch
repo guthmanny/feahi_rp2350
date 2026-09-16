@@ -1,0 +1,114 @@
+(kicad_sch
+	(version 20260306)
+	(generator "eeschema")
+	(generator_version "10.0")
+	(uuid "2b2a002e-9a04-4272-830a-39f713f72b86")
+	(paper "A4")
+	(title_block
+		(title "PERIPH-1 (C6+8080) / Power")
+		(date "2026-09-14")
+		(rev "v0.1-framework")
+		(company "FEAHI / Soran SP-1")
+		(comment 1 "Block diagram — replace placeholders with library symbols")
+	)
+	(lib_symbols)
+	(text "LDO 2.8/3.3 for LCD IOVCC if needed"
+		(exclude_from_sim yes)
+		(at 25 34.72 0)
+		(effects
+			(font
+				(size 1.8 1.8)
+			)
+			(justify left bottom)
+		)
+		(uuid "5617d6b4-b196-4f11-9ddc-8a6995c3a417")
+	)
+	(text "Boost 5V for Amp / LEDA"
+		(exclude_from_sim yes)
+		(at 25 31.48 0)
+		(effects
+			(font
+				(size 1.8 1.8)
+			)
+			(justify left bottom)
+		)
+		(uuid "59089572-fb10-4df6-8005-7d07de9a3cf8")
+	)
+	(text "PMIC  → VBAT to CBI"
+		(exclude_from_sim yes)
+		(at 25 28.24 0)
+		(effects
+			(font
+				(size 1.8 1.8)
+			)
+			(justify left bottom)
+		)
+		(uuid "5c70a491-cbfe-43b2-9e28-750084c88548")
+	)
+	(text "BAT   Li-ion + charger (USB-C)"
+		(exclude_from_sim yes)
+		(at 25 25 0)
+		(effects
+			(font
+				(size 1.8 1.8)
+			)
+			(justify left bottom)
+		)
+		(uuid "c5515889-cd81-485e-8b4e-a6c01bd7f93c")
+	)
+	(hierarchical_label "+5V"
+		(shape output)
+		(at 180 75 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "2bec43a0-b663-466c-ab25-1bb73c7ce5a8")
+	)
+	(hierarchical_label "GND"
+		(shape input)
+		(at 30 70 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "3442d8c7-7d0d-4f38-b992-3c9585a0cad9")
+	)
+	(hierarchical_label "GND"
+		(shape output)
+		(at 180 85 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "c41afe58-edae-4153-a6dc-ab326d55dbfc")
+	)
+	(hierarchical_label "+3V3"
+		(shape output)
+		(at 180 80 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "ddc27ade-342e-4f6c-b070-2e174fc0fe16")
+	)
+	(hierarchical_label "VBAT"
+		(shape output)
+		(at 180 70 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "fa82303c-b6f2-474f-b046-79491b05cde7")
+	)
+)

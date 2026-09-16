@@ -1,0 +1,200 @@
+(kicad_sch
+	(version 20260306)
+	(generator "feahi_generate_schematic_framework")
+	(generator_version "1.0")
+	(uuid "48675231-4782-4633-b051-2ba1c8e96496")
+	(paper "A4")
+	(title_block
+		(title "CORE-B (RP2350)")
+		(date "2026-09-14")
+		(rev "v0.1-framework")
+		(company "FEAHI / Soran SP-1")
+		(comment 1 "Block diagram — replace placeholders with library symbols")
+	)
+
+	(text "SP-1 schematic framework (方案 C)"
+		(exclude_from_sim yes)
+		(at 20.00 15.00 0)
+		(effects (font (size 1.6 1.6)) (justify left bottom))
+		(uuid "6c07c36b-a407-44f0-b7ba-4aec94c3dcf2")
+	)
+	(text "Replace blocks with KiCad library symbols."
+		(exclude_from_sim yes)
+		(at 20.00 17.88 0)
+		(effects (font (size 1.6 1.6)) (justify left bottom))
+		(uuid "19b104fb-041e-4b71-9857-af034b38b81a")
+	)
+	(text "Netlists: hardware/schematic/"
+		(exclude_from_sim yes)
+		(at 20.00 20.76 0)
+		(effects (font (size 1.6 1.6)) (justify left bottom))
+		(uuid "3f1e5ebe-9081-461e-976e-5135025a09e6")
+	)
+	(sheet
+		(at 25.00 45.00)
+		(size 38.00 28.00)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke (width 0.1524) (type solid))
+		(fill (color 0 0 0 0.0000))
+		(uuid "26314c30-f0ad-4de4-8512-5eb9957b8d04")
+		(property "Sheetname" "MCU"
+			(at 25.00 44.50 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects (font (size 1.27 1.27)) (justify left bottom))
+		)
+		(property "Sheetfile" "sheets/core_mcu.kicad_sch"
+			(at 25.00 73.50 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects (font (size 1.27 1.27)) (justify left top))
+		)
+
+		(instances
+			(project "feahi_cbi40_core"
+				(path "/f6e2961e-3cf9-42a8-914f-c4fee95ec404"
+					(page "2")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 80.00 45.00)
+		(size 38.00 28.00)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke (width 0.1524) (type solid))
+		(fill (color 0 0 0 0.0000))
+		(uuid "830c5174-5407-4c9b-9cf6-30a4033e3944")
+		(property "Sheetname" "NAND"
+			(at 80.00 44.50 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects (font (size 1.27 1.27)) (justify left bottom))
+		)
+		(property "Sheetfile" "sheets/core_nand.kicad_sch"
+			(at 80.00 73.50 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects (font (size 1.27 1.27)) (justify left top))
+		)
+
+		(instances
+			(project "feahi_cbi40_core"
+				(path "/c6639adc-278a-45fe-8780-c06ed37e2cc8"
+					(page "3")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 135.00 45.00)
+		(size 38.00 28.00)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke (width 0.1524) (type solid))
+		(fill (color 0 0 0 0.0000))
+		(uuid "89d8232c-b0b9-4f0c-a80c-6dba4fc14058")
+		(property "Sheetname" "USB"
+			(at 135.00 44.50 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects (font (size 1.27 1.27)) (justify left bottom))
+		)
+		(property "Sheetfile" "sheets/core_usb.kicad_sch"
+			(at 135.00 73.50 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects (font (size 1.27 1.27)) (justify left top))
+		)
+
+		(instances
+			(project "feahi_cbi40_core"
+				(path "/b966a5e2-3074-4a21-8c6d-6aa5cf1ec969"
+					(page "4")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 25.00 95.00)
+		(size 38.00 28.00)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke (width 0.1524) (type solid))
+		(fill (color 0 0 0 0.0000))
+		(uuid "e81410eb-3c45-4c4f-b423-67fc2f47a21e")
+		(property "Sheetname" "Power"
+			(at 25.00 94.50 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects (font (size 1.27 1.27)) (justify left bottom))
+		)
+		(property "Sheetfile" "sheets/core_power.kicad_sch"
+			(at 25.00 123.50 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects (font (size 1.27 1.27)) (justify left top))
+		)
+
+		(instances
+			(project "feahi_cbi40_core"
+				(path "/b2ad4d29-b906-46d2-beba-384ccb5e1e60"
+					(page "5")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 80.00 95.00)
+		(size 38.00 28.00)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke (width 0.1524) (type solid))
+		(fill (color 0 0 0 0.0000))
+		(uuid "0238d5f1-3910-4cf1-8c96-aebf6f59b861")
+		(property "Sheetname" "CBI40"
+			(at 80.00 94.50 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects (font (size 1.27 1.27)) (justify left bottom))
+		)
+		(property "Sheetfile" "sheets/core_cbi.kicad_sch"
+			(at 80.00 123.50 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects (font (size 1.27 1.27)) (justify left top))
+		)
+
+		(instances
+			(project "feahi_cbi40_core"
+				(path "/1f9cb370-9fe0-40d1-b641-fbf608d04d70"
+					(page "6")
+				)
+			)
+		)
+	)
+	(lib_symbols)
+	(sheet_instances
+		(path "/"
+			(page "1")
+		)
+	)
+	(embedded_fonts no)
+)

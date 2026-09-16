@@ -1,0 +1,268 @@
+(kicad_sch
+	(version 20260306)
+	(generator "eeschema")
+	(generator_version "10.0")
+	(uuid "5b1e8e6c-3f98-4ecb-8c9d-473bdc236308")
+	(paper "A4")
+	(title_block
+		(title "PERIPH-1 (C6+8080) / CBI40")
+		(date "2026-09-14")
+		(rev "v0.1-framework")
+		(company "FEAHI / Soran SP-1")
+		(comment 1 "Block diagram — replace placeholders with library symbols")
+	)
+	(lib_symbols)
+	(text "J1  FEAHI-CBI-40 v0.3 (SMD pads top)"
+		(exclude_from_sim yes)
+		(at 25 25 0)
+		(effects
+			(font
+				(size 1.8 1.8)
+			)
+			(justify left bottom)
+		)
+		(uuid "3873818d-08ec-4eea-a746-215237972f8f")
+	)
+	(text "mates CORE-B / CORE-A"
+		(exclude_from_sim yes)
+		(at 25 28.24 0)
+		(effects
+			(font
+				(size 1.8 1.8)
+			)
+			(justify left bottom)
+		)
+		(uuid "3d29ff0e-cad1-4ed4-981a-1dd25e9652a7")
+	)
+	(text "I2S + IPC + MIDI + power"
+		(exclude_from_sim yes)
+		(at 25 31.48 0)
+		(effects
+			(font
+				(size 1.8 1.8)
+			)
+			(justify left bottom)
+		)
+		(uuid "ef539f81-9b08-49ed-8ed6-8871d7dec0fc")
+	)
+	(hierarchical_label "I2S_MCLK"
+		(shape input)
+		(at 180 70 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "01d87230-8717-4179-95dd-5758e6f1b11f")
+	)
+	(hierarchical_label "IPC_TX"
+		(shape output)
+		(at 30 80 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "0c187d73-0d3b-46d7-95ad-8dc6dfae8796")
+	)
+	(hierarchical_label "I2S_LRCLK"
+		(shape input)
+		(at 180 80 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "1990b5ff-be69-4f90-ade1-710778584219")
+	)
+	(hierarchical_label "I2S_BCLK"
+		(shape input)
+		(at 180 75 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "2049482f-f755-4e58-a614-898f0222f513")
+	)
+	(hierarchical_label "MIDI_RX"
+		(shape input)
+		(at 180 100 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "2b1251a9-b6e1-4848-a239-725876dc0db8")
+	)
+	(hierarchical_label "DEBUG_TX"
+		(shape input)
+		(at 180 105 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "2d343390-61dd-41ee-a5ca-07b5476f876b")
+	)
+	(hierarchical_label "I2S_DIN"
+		(shape output)
+		(at 30 75 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "4e8c30cd-5144-4ce4-ba9f-ac134d1761a8")
+	)
+	(hierarchical_label "AUD_BOOT"
+		(shape input)
+		(at 180 120 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "578fc002-a5c9-4cbd-aba0-673682fc08cf")
+	)
+	(hierarchical_label "C6_BOOT"
+		(shape input)
+		(at 180 95 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "58b6c618-ed6c-4fde-8906-456d2d31fc93")
+	)
+	(hierarchical_label "MIDI_TX"
+		(shape output)
+		(at 30 85 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "60f6de88-8fbb-443d-ba01-7046cc395bd7")
+	)
+	(hierarchical_label "+5V"
+		(shape output)
+		(at 30 70 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "7acba3a5-838c-484d-bc7e-c1be428f61da")
+	)
+	(hierarchical_label "I2S_DOUT"
+		(shape input)
+		(at 180 85 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "82f31ff7-79a1-4112-a90b-de054c242a0b")
+	)
+	(hierarchical_label "SPK_MUTE"
+		(shape input)
+		(at 180 115 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "ba04bf7f-3441-4829-83db-6b113ff10ac9")
+	)
+	(hierarchical_label "DEBUG_RX"
+		(shape input)
+		(at 180 110 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "bcedf90b-1e1a-470f-bf90-3c44b429a520")
+	)
+	(hierarchical_label "VBAT"
+		(shape output)
+		(at 30 65 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "c0802ce3-42b1-4393-89c7-358e68cef2a8")
+	)
+	(hierarchical_label "GND"
+		(shape input)
+		(at 180 125 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "d989f7a7-a918-405d-a29c-94471fbc2ad9")
+	)
+	(hierarchical_label "HP_DETECT"
+		(shape output)
+		(at 30 90 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "da2a116c-dc23-42ec-a4fb-6b7a7089a80b")
+	)
+	(hierarchical_label "GND"
+		(shape output)
+		(at 30 95 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "de61f25b-e623-49db-8aba-e27edf1b32f1")
+	)
+	(hierarchical_label "IPC_RX"
+		(shape input)
+		(at 180 90 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "ecfbeb35-f6b0-40f2-8a42-8895e929f9b3")
+	)
+	(hierarchical_label "+3V3"
+		(shape input)
+		(at 180 65 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "f0152f62-cb12-473a-bf99-f65c2d2370de")
+	)
+)

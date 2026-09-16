@@ -1,0 +1,51 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+
+# Secrets
+.env
+.env.*
+*.pem
+*.key
+credentials.json
+
+# Build outputs
+build/
+_build/
+dist/
+out/
+*.o
+*.obj
+*.elf
+*.bin
+*.uf2
+*.hex
+*.map
+
+# Pico SDK / ESP-IDF
+.pico/
+.pio/
+sdkconfig
+sdkconfig.old
+managed_components/
+
+# KiCad local / backup
+*.lck
+*-backups/
+*.bak
+*.kicad_pcb-bak
+*.kicad_sch-bak
+.history/
+**/fp-info-cache
+**/sym-lib-table.bak
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
