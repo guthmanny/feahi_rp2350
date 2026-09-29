@@ -26,7 +26,7 @@ LINE_OUT_L,analog,MS4344 OUTL,VOL pot → Amp/TRS,—,
 LINE_OUT_R,analog,MS4344 OUTR,VOL pot → Amp/TRS,—,
 SPK+,analog,Amp output,Speaker,—,
 SPK-,analog,Amp output,Speaker,—,
-I2C_SDA,digital,C6 GPIO6,TCA8418+IS31,—,board-only
-I2C_SCL,digital,C6 GPIO7,TCA8418+IS31,—,board-only
+I2C_SDA,digital,C6 GPIO6,IS31FL3729 U18,—,board-only; 归档网表见 sp1_nets.csv
+I2C_SCL,digital,C6 GPIO7,IS31FL3729 U18,—,board-only
 LCD_DB0..7,digital,C6,TF FPC 7-14,—,8080 board-only
 LCD_CTRL,digital,C6,FPC WR/RS/CS/RST,—,board-only

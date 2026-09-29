@@ -1,555 +1,145 @@
-# SP-1 模块化硬件方案
+# SP-1 单板硬件方案
+
+> **状态：** v0.4（2026-09-23）  
+> **变更：** Pad 矩阵 **方案 A** — **RP2350 GPIO** 直扫 `MAT_*`；C6 I²C 仅 **IS31FL3729**（见 [sp1_rp2350_pad_matrix.md](../hardware/schematic/sp1_rp2350_pad_matrix.md)、[sp1_c6_ui.md](../hardware/schematic/sp1_c6_ui.md)）。  
+> v0.2：放弃 **CORE + PERIPH 叠板 / CBI-40**，改为 **单板 SP-1**。
 
 ## 设计目标
 
 | 目标 | 做法 |
 |------|------|
-| 核心板纯音频数字、可互换 | 4 层 **核心板** 放 RP2350/S3 + NAND + USB |
-| UI + 模拟靠近接口 | 2 层 **外围板** 放 **C6 + 8080 屏** + MS1808/MS4344 + 功放 |
-| 可对比 A/B 主控方案 | 核心板可互换，**PERIPH-1 固定（含 C6 + 屏）** |
-| 开发阶段灵活 | 邮票孔（Castellation）叠焊 |
+| 结构简单、量产一致 | **一块 PCB** 集成 RP2350、C6、Codec、屏、接口与电源 |
+| 音频实时路径 | RP2350：I2S、NAND、Pad/Seq、**USB Audio**、DIN MIDI |
+| UI 与连接 | ESP32-C6：8080 屏、I2C 键灯、BLE/WiFi、IPC 从机 |
+| 用户接口 | **单一 USB-C**（供电 + USB 2.0 至 RP2350：UF2 / CDC / UAC） |
+| 便携 | 锂电池 + 充电 PMIC；VBAT 经升压供功放 / 背光 |
 
 ```
-                    ┌─────────────────────┐
-                    │   CORE-B 或 CORE-A  │  4-layer，纯音频数字
-                    │  RP2350/S3+NAND+USB │
-                    └──────────┬──────────┘
-                               │ 邮票孔 CBI-40 v0.3
-                               │  I2S + IPC UART + MIDI …
-                    ┌──────────┴──────────┐
-                    │     PERIPH-1        │  2-layer
-                    │ C6 + 8080 LCD       │  ← 屏与 UI 不跨板
-                    │ MS1808/4344 + 键/功放│
-                    └─────────────────────┘
+┌──────────────────────────── SP-1 单板 ────────────────────────────┐
+│  J1 USB-C ──► VBUS→PMIC │ D+/D−→ESD→RP2350 (UAC/UF2/CDC)        │
+│  U1 RP2350A + U2 PSRAM + U4 Flash + U3 NAND                       │
+│       │ I2S ─────────────► MS1808 / MS4344 ──► 模拟 / 功放 / TRS  │
+│       │ UART1 ───────────► ESP32-C6-MINI ──► TFT020B107 8080       │
+│       │ UART0 ───────────► MIDI IN/OUT                             │
+│  C6 ──I2C──► IS31FL3729 │ RP2350 ──MAT_* + EC11 编码器 ──► IPC → C6  │
+│  BAT + 充电 PMIC + 3.3 V / 5 V 电源树                              │
+└───────────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
 ## 板级定义
 
-| 板名 | 层数 | 职责 | SKU |
-|------|------|------|-----|
-| **CORE-B** | 4L | RP2350 + APS6404L + NAND + USB | 量产首选 |
-| **CORE-A** | 4L | ESP32-S3 N16R8 + NAND + USB | A 方案对照 |
-| **PERIPH-1** | 2L | **C6 + TFT020B107 8080 屏** + MS1808/MS4344 + 键/功放/电池 | 固定，含 UI |
-
-> 核心板外形、邮票孔位置、定位孔 **完全一致**，仅板内器件不同。  
-> **Codec 固定在外围板**，A/B 对照时模拟前端完全一致。
-
----
-
-## 核心板 vs 外围板分工
-
-### 核心板（4 层）—「纯音频数字」（方案 C）
-
-| 器件 | 说明 |
-|------|------|
-| **音频 MCU** | CORE-B：**RP2350** + APS6404L；CORE-A：**ESP32-S3** N16R8 |
-| **NAND** | W25N01GV（1Gb SPI NAND），SPI/QSPI 接音频 MCU |
-| **USB-C** | USB 2.0 OTG（UAC / 烧录） |
-| **24.576 MHz 晶振** | I2S MCLK → CBI |
-| **LDO** | 3.3 V → CBI +3V3 供外围逻辑 |
-
-**核心板不再放置：** ESP32-C6、LCD、MS1808/MS4344、按键、功放。
-
-### 外围板（2 层）—「UI + 模拟 + 接口」（方案 C）
-
-| 器件 | 说明 |
-|------|------|
-| **ESP32-C6-MINI** | LVGL、8080 屏、I2C 键灯、BLE/WiFi、IPC 从机 |
-| **2" TFT** | **TFT020B107-C0**，ST7789P3，**8080 8-bit 并口**，仅接 C6 |
-| **MS1808** | ADC，Mic/Line → I2S_DIN → CBI |
-| **MS4344** | DAC，CBI I2S_DOUT → 模拟 → Volume → 功放/TRS |
-| **5 W 功放** | Class-D |
-| **按键 + LED** | TCA8418 + IS31FL3733 → **C6 I2C（板内）** |
-| **编码器 / 电源键** | 接 **C6 GPIO（板内）** |
-| **TRS / MIDI 插座** | 模拟/串口在板内；MIDI UART **经 CBI** 接 Core |
-| **电池 + 充电 USB-C** | PMIC，VBAT 上送 Core |
-
-8080 屏连接草案：[hardware/datasheets/TFT020B107-C0_C6_GPIO.md](../hardware/datasheets/TFT020B107-C0_C6_GPIO.md)
-
-**方案 C 理由（量产屏 TFT020B107 为 8080，不可换）：**
-
-1. **8080 屏 13+ GPIO 不跨 CBI**，C6 与 FPC 同板最短  
-2. DAC/ADC 模拟链与功放同板  
-3. 换 CORE-A/B 时 **Periph（含 C6+屏）不变**，A/B 对照公平  
-4. Core 仅 RP2350/S3 + NAND，面积更小  
+| 项 | 值 |
+|----|-----|
+| **产品 PCB** | **SP-1**（与 KiCad 工程 `hardware/kicad/sp-1/` 对应） |
+| **推荐层数** | **4 层**（USB / RP2350 / C6 8080 走线 + 完整地 + 模拟分区） |
+| **主控（音频）** | **RP2350A** QFN-60 |
+| **主控（UI）** | **ESP32-C6-MINI-1** |
+| **已取消** | CORE-A / CORE-B / PERIPH-1 分板、**FEAHI-CBI-40** 邮票孔、ESP32-S3 A 方案对照板 |
 
 ---
 
-## 板间连接：CBI-40 v0.3（方案 C）
+## 功能分区（同板布局建议）
 
-### 跨板 vs 板内
-
-| 信号 | 跨 CBI | 说明 |
-|------|--------|------|
-| I2S ×5 | ✅ | RP2350/S3 ↔ MS1808/MS4344 |
-| IPC UART ×2 | ✅ | RP2350/S3 ↔ **C6** |
-| MIDI UART ×2 | ✅ | Core ↔ MIDI 插座 |
-| DEBUG UART | ✅ | 可选 |
-| 电源 | ✅ | VBAT, +3V3, +5V, GND |
-| HP_DETECT / SPK_MUTE | ✅ | |
-| **8080 LCD** | ❌ | C6 ↔ FPC，**板内** |
-| **I2C 键/灯** | ❌ | C6 ↔ TCA8418/IS31，**板内** |
-| **编码器 / 电源键** | ❌ | C6 **板内** |
-
-### 规格摘要
-
-| 参数 | 值 |
-|------|-----|
-| 名称 | **FEAHI-CBI-40**（项目内标准） |
-| 形式 | 2×20 邮票孔，2.54 mm |
-| Core 外形 | **50.0 × 36.0 mm**，1.6 mm 厚 |
-| 定位 | 4× M2（Ø2.0 mm）+ 左上角缺角防呆 |
-| 机械详情 | 见下节 **[FEAHI-CBI-40 机械规格](#feahi-cbi-40-机械规格v10-草案)** |
+| 区域 | 主要器件 | 说明 |
+|------|----------|------|
+| **数字核心** | RP2350、W25Q32、APS6404L、W25N01GV、**12.288 MHz** 晶振 | Flash/PSRAM/NAND 走线短；48k×256fs MCLK；时钟见 `rp2350a_interfaces.md` |
+| **USB** | Type-C 16P、USBLC6-2 类 ESD | **唯一用户 USB 口**；CC1/CC2 各 5.1 kΩ→GND（Device）；D+/D−→RP2350 |
+| **UI** | C6、TFT020B107 FPC、**IS31FL3729** Pad 灯；**RP2350** 扫 **5×6 Choc** | 8080 **仅 C6**；Pad 热路径在 RP2350；见 [sp1_c6_ui.md](../hardware/schematic/sp1_c6_ui.md) |
+| **音频模拟** | MS1808、MS4344、NE5532/SGM5532、电位器、Class-D | I2S 数字线来自 RP2350；模拟地与数字地单点/分区 |
+| **接口** | MIDI DIN、TRS、Mic、喇叭 pad | MIDI UART 接 RP2350；模拟链在 Codec 周边 |
+| **电源** | 锂电、充电 PMIC、3.3 V LDO、5 V 升压 | 插 USB 时 PMIC **power path** 供 SYS；电池与 USB OR |
 
 ---
 
-## CBI-40 引脚定义（v0.3 — 方案 C）
+## 关键互连（无 CBI，板内直连）
 
-| Pin | 信号 | 方向 (Core→Periph) | 说明 |
-|-----|------|-------------------|------|
-| 1 | VBAT | IN | 电池 3.0–4.2 V |
-| 2 | VBAT | IN | 并联 |
-| 3 | +5V | IN | Periph 升压 |
-| 4 | +3V3 | OUT | Core → C6 / MS1808 / MS4344 数字 |
-| 5–8 | GND | — | I2S 回流 |
-| 9 | I2S_MCLK | OUT | 24.576 MHz |
-| 10 | I2S_BCLK | OUT | |
-| 11 | I2S_LRCLK | OUT | |
-| 12 | I2S_DOUT | OUT | → MS4344 |
-| 13 | I2S_DIN | IN | ← MS1808 |
-| 14 | HP_DETECT | IN | TRS 插入 |
-| 15 | SPK_MUTE | OUT | 静音喇叭 |
-| 16–17 | NC | — | 预留 |
-| 18 | IPC_TX | OUT | **RP2350/S3 → C6 RX** |
-| 19 | IPC_RX | IN | **C6 TX → RP2350/S3** |
-| 20 | C6_BOOT | IO | C6 下载 / strap |
-| 21 | MIDI_TX | OUT | |
-| 22 | MIDI_RX | IN | |
-| 23 | DEBUG_TX | OUT | RP2350/S3 调试 |
-| 24 | DEBUG_RX | IN | |
-| 25 | AUD_BOOT | IO | RP2350 BOOTSEL（CORE-A NC） |
-| 26–39 | NC | — | 预留 |
-| 40 | SHIELD | — | |
+| 信号 | 从 | 到 | 说明 |
+|------|-----|-----|------|
+| I2S ×5 | RP2350 GP20/16/17/18/9 | MS1808 + MS4344 | MCLK/BCLK/LRCLK 两 Codec 共线 |
+| IPC UART | RP2350 GP4/5 | C6 UART0（交叉 TX/RX） | 921600 baud |
+| MIDI UART | RP2350 GP0/1 | MIDI 光耦 / 驱动 | 31250 baud |
+| USB D+/D− | J1 | ESD → RP2350 USB 焊盘 | 90 Ω 差分，短、少过孔 |
+| +3V3 | PMIC/LDO 树 | RP2350、C6、Codec 数字、I2C 外设 | 按电流分区去耦 |
+| VBAT / +5V | 电池 / PMIC / 升压 | 功放、背光、PMIC 输入 | 见电源原理图 |
 
-> v0.2 的 LCD_* / I2C / ENC / PWR_BTN 已移出 CBI，改在 PERIPH 板内接 C6。
+完整网表见 [hardware/schematic/sp1_nets.csv](../hardware/schematic/sp1_nets.csv)。  
+GPIO 表：[rp2350a_gpio.csv](../hardware/schematic/rp2350a_gpio.csv)、[c6_gpio.csv](../hardware/schematic/c6_gpio.csv)。
 
 ---
 
-## FEAHI-CBI-40 机械规格（v1.0 草案）
+## USB（量产单口）
 
-> **文档编号：** FEAHI-CBI-40-MECH v1.0  
-> **适用范围：** CORE-A、CORE-B、PERIPH-1 及后续同接口扩展板  
-> **状态：** 草案 — 首版 PCB 打样前需与结构件核对
-
-### 1. 标准层级说明
-
-| 层级 | 内容 | 性质 |
-|------|------|------|
-| L0 | 2.54 mm 间距、1.6 mm 板厚、邮票孔工艺 | 行业惯例 |
-| L1 | **FEAHI-CBI-40** 引脚定义（见上表 v0.3） | 项目协议 |
-| L2 | **本文档** 外形、坐标、公差、禁布 | 项目机械标准 |
-
-### 2. 坐标系与视图
-
-```
-坐标原点 (0, 0)：Core 板左下角（Bottom View，即邮票孔面）
-+X：向右
-+Y：向上（远离邮票孔边缘，进入板内）
-
-堆叠方向（默认）：
-  Core 元件面朝上 → Core 邮票孔面朝下 → 焊接到 Periph 顶面焊盘
-  Periph 元件面朝上（屏、C6、键、MS1808/MS4344 等）
-```
-
-| 视图 | 用途 |
-|------|------|
-| Core **Bottom View** | 邮票孔、Pin 1 标记、定位孔 |
-| Periph **Top View** | 对应焊盘、Core 禁布区、定位孔 |
-
-### 3. Core 板外形（CORE-A / CORE-B 共用）
-
-| 参数 | 数值 | 公差 |
-|------|------|------|
-| 板长（X） | **50.0 mm** | ±0.15 mm |
-| 板宽（Y） | **36.0 mm** | ±0.15 mm |
-| 板厚 | **1.6 mm** | ±0.12 mm |
-| 板形 | 矩形，四角 **R1.0 mm** 圆角 | |
-| 邮票孔边 | **底边**（Y = 0 边，Bottom View） | |
-| 顶层丝印 | 型号、`FEAHI-CBI-40`、`Pin1 ◄` | |
-
-```
-Core Bottom View（50 × 36 mm）
-                    +Y
-                     ↑
-         ┌───────────────────────┐ 36 mm
-         │  ○ M2              ○  │
-         │                       │
-         │    [MCU / NAND 区]    │
-         │                       │
-         │  ○ M2              ○  │
-         ├──●═══…═══…═══…═══●──┤ ← 邮票孔 2×20（Y=0 底边）
-         └───────────────────────┘
-         0                      50 mm → +X
-              Pin1 ●          Pin20 ●
-                   Pin21 ● … Pin40 ●（内排 Y=2.54 mm）
-```
-
-### 4. 邮票孔（Castellation）几何
-
-| 参数 | 数值 |
-|------|------|
-| 排数 × 每排 pin 数 | **2 × 20 = 40** |
-| Pin 间距（同排） | **2.54 mm** |
-| 排间距（外排 → 内排） | **2.54 mm** |
-| 有效跨距（Pin1–Pin20 中心） | **48.26 mm**（19 × 2.54） |
-| 底边留白（Pin1 中心距左缘） | **0.87 mm** |
-| 底边留白（Pin20 中心距右缘） | **0.87 mm** |
-| 钻孔（castellation 半孔） | **Ø0.80 mm** |
-| 焊盘宽度（板边） | **1.50 mm**（推荐） |
-| 电镀 | 化学镍金（ENIG）或 HASL（打样可用 HASL） |
-
-**排与逻辑 Pin 对应：**
-
-| 物理排 | 逻辑 Pin | 位置（Bottom View） |
-|--------|----------|---------------------|
-| **外排**（靠板边） | 1 – 20 | Y = 0（板边半孔中心） |
-| **内排** | 21 – 40 | Y = 2.54 mm |
-
-**Pin N（N = 1…20）中心坐标：**
-
-```
-X(N) = 0.87 + (N − 1) × 2.54   [mm]
-Y = 0                           外排 Pin 1–20
-
-X(N) = 0.87 + (N − 21) × 2.54  [mm]  （N = 21…40 时改用 N-20）
-Y = 2.54                        内排 Pin 21–40
-```
-
-简化：Pin **k**（k = 1…40）的 X 坐标：
-
-```
-X(k) = 0.87 + ((k − 1) mod 20) × 2.54
-Y(k) = 0        若 k ≤ 20
-Y(k) = 2.54     若 k > 20
-```
-
-### 5. 定位孔（4× M2）
-
-| 孔 | 用途 | 中心坐标 (X, Y) mm | 钻孔 | 备注 |
-|----|------|-------------------|------|------|
-| **H1** | 定位 | **(3.0, 3.0)** | **Ø2.0 NPTH** | 左下，**Pin1 侧** |
-| **H2** | 定位 | **(47.0, 3.0)** | **Ø2.0 NPTH** | 右下 |
-| **H3** | 定位 | **(3.0, 33.0)** | **Ø2.0 NPTH** | 左上 |
-| **H4** | 定位 | **(47.0, 33.0)** | **Ø2.0 NPTH** | 右上 |
-
-| 参数 | 数值 |
-|------|------|
-| 螺丝 | M2 × 4 mm 尼龙柱或金属柱（开发架） |
-| 公差 | 孔位 ±0.05 mm |
-| **防呆** | Core 左上角（H3 附近）切 **1.5 × 1.5 mm 缺角**；Periph 同位置不开孔或填实 |
-
-> 量产贴片：可仅用 4 孔 + 邮票孔焊接，不强制螺丝；开发期建议 **2 柱 + 焊接** 减变形。
-
-### 6. Periph 对接区（Landing Zone）
-
-Periph 顶面须预留与 Core **同坐标系对齐** 的 **Core Bay**：
-
-| 参数 | 数值 |
-|------|------|
-| Core Bay 外形 | **50.0 × 36.0 mm**（与 Core 一致） |
-| 焊盘 | 40 个，与 Core 邮票孔 **1:1 镜像**（Top View 看 X 同向） |
-| 焊盘类型 | **SMD 圆 pad 或 oval**，Ø1.5 mm |
-| 禁布高度 | Bay 内 Periph **Top 面** 元器件 **≤ 0.5 mm**（仅允许 0 Ω、DNP 测试点） |
-| 禁布区扩展 | Bay 外扩 **1.0 mm** 环带建议不走高速线 |
-
-**Periph 上 Core Bay 推荐位置（Top View，整机坐标待结构定）：**
-
-| 参数 | 建议值 |
-|------|--------|
-| Bay 位置 | 板体 **后部中央**（远离 Speaker / Amp 热区） |
-| 与 I2S Codec 距离 | Codec 放置在 Bay **前方 ≤ 15 mm**，I2S 直线连接 |
-| 与 Class-D 距离 | Bay 至 Amp SW 节点 **≥ 8 mm** |
-
-```
-Periph Top View（示意，外轮廓 TBD）
-┌────────────────────────────────────────┐
-│  [2" TFT]          [Keys]              │
-│                                        │
-│  ┌── Core Bay 50×36 ──┐  [Codec+Amp]  │
-│  │ ○    [焊盘×40]    ○ │  ← 模拟区    │
-│  │   (Core 叠放区)     │              │
-│  └─────────────────────┘              │
-│  [TRS]  [MIDI]  [Battery]             │
-└────────────────────────────────────────┘
-```
-
-### 7. 堆叠与高度
-
-| 项目 | 高度 |
-|------|------|
-| Core PCB | 1.6 mm |
-| Core 顶面最高元件（模组） | ≤ **4.0 mm**（目标） |
-| 邮票孔焊锡填充 | ~0.1 – 0.3 mm |
-| Periph PCB | 1.6 mm |
-| Periph Core Bay 焊盘区 | 0 mm（无件） |
-| **Core+Periph 叠板厚度** | **~3.3 – 3.5 mm**（不含 Core 顶面模组） |
-| Core 顶面至 Periph 底面（若 Periph 在下） | 整机结构另计 |
-
-### 8. 电气与 PCB 工艺要求
-
-| 项 | Core（4L） | Periph（2L） |
-|----|------------|--------------|
-| 层叠 | L1–L4 见本文「4 层核心板」章节 | 1.6 mm 双面板 |
-| I2S 线宽 | 0.15 mm（至邮票孔） | 0.15 mm（自 Bay 至 Codec） |
-| I2S 阻抗 | 非差分，但 **等长 ±3 mm** | 同左 |
-| GND | Pin 5–8 对应 Periph **独立地过孔 ×4** | Bay 下方铺地 |
-| USB（Core 板边） | 90 Ω 差分，不经过 CBI | — |
-| 邮票孔 | Fab 能力：**Plated half-hole / castellation** 必须支持 | 对应 oval pad |
-
-**Gerber 备注（给 PCB 厂）：**
-
-```
-1. Bottom edge row 1-20: castellated holes, plated half-hole required.
-2. Row 2 (Y=2.54 mm from edge): castellated or through-hole to edge per fab capability.
-3. Pin 1: square pad on Core bottom silkscreen.
-4. Board thickness 1.6 mm ±0.12 mm.
-5. Do not rotate or mirror CBI pad array on Periph.
-```
-
-### 9. Pin 1 与防错
-
-| 措施 | Core | Periph |
-|------|------|--------|
-| 丝印 | 底面 Pin1 处 **◄ Pin1** + 方焊盘 | Top Bay Pin1 处 **◄ Pin1** + 方焊盘 |
-| 缺角防呆 | 左上角 **1.5 mm 切角** | 同位置机械限位或缺角 |
-| 颜色（可选） | Core-B / Core-A 不同贴纸 | — |
-
-### 10. 逻辑 Pin ↔ 物理坐标速查（外排 Pin 1–10）
-
-| Pin | 信号 | X (mm) | Y (mm) |
-|-----|------|--------|--------|
-| 1 | VBAT | 0.87 | 0 |
-| 2 | VBAT | 3.41 | 0 |
-| 3 | +5V | 5.95 | 0 |
-| 4 | +3V3 | 8.49 | 0 |
-| 5 | GND | 11.03 | 0 |
-| 6 | GND | 13.57 | 0 |
-| 7 | GND | 16.11 | 0 |
-| 8 | GND | 18.65 | 0 |
-| 9 | I2S_MCLK | 21.19 | 0 |
-| 10 | I2S_BCLK | 23.73 | 0 |
-
-内排 Pin 21–30 与外排 Pin 1–10 **X 坐标相同**，Y = **2.54 mm**（信号见引脚表 Pin 21 = LCD_DC …）。
-
-### 11. 版本与变更
-
-| 版本 | 日期 | 变更 |
-|------|------|------|
-| **v1.0** | 2026-09-14 | 初版：50×36 Core、2×20 邮票孔、Codec 在下板、I2S 跨板 |
-| v1.1 | TBD | 首版打样反馈：间距 / 缺角 / Periph Bay 整机坐标 |
-
-> 任何变更须 **同时更新** CORE-A、CORE-B、PERIPH-1 的 Gerber，并 bump 版本号。
-
-### 12. 打样检查清单
-
-- [ ] Core / Periph Pin1 丝印对齐，万用表测 Pin1=VBAT
-- [ ] 40 焊盘连通性（无开路 / 短接）
-- [ ] I2S 自环：Core 输出 → Periph Codec → I2S_DIN 回 Core
-- [ ] 定位孔与缺角：Core 仅一种方向可装入 Periph 限位
-- [ ] 堆叠后 Core 顶模组不干涉 Periph 结构件
-- [ ] CORE-A 与 CORE-B 可互换，PERIPH-1 无需改板
+| 项 | 说明 |
+|----|------|
+| **物理** | 板边 **一个** Type-C 母座（BOM：`05000-02000-00100` 一类 16P 沉板，或结构确认后的等价件） |
+| **数据** | **RP2350** 实现 UAC2、UF2、USB-CDC；**C6 不使用 USB 设备功能**（量产） |
+| **供电** | VBUS → 充电/电源 PMIC → 系统 3.3 V / 电池 / 5 V 升压；插线可工作 + 可充电 |
+| **CC** | 各 **5.1 kΩ 到 GND**（USB 2.0 Device） |
 
 ---
 
-## 音频数据流（Codec 在下板）
+## 8080 屏
 
-```
-                    CORE                          PERIPH-1
-              ┌─────────────┐                ┌─────────────────────────┐
-              │ RP2350 / S3 │                │                         │
-              │             │  I2S_DOUT ────►│ Codec DAC → VOL → Amp  │──► Speaker
-              │             │◄──── I2S_DIN   │         ↘              │──► TRS OUT
-              │             │                │ Mic / Line IN → ADC    │
-              │             │  I2C ─────────►│ Codec reg (0x18)       │
-              └─────────────┘                └─────────────────────────┘
-```
+- 模组：**TFT020B107-C0**（江西华佳 / JME-01 规格书，ST7789P3，8080 8-bit）  
+- **FPC：22 pin、0.5 mm 间距**；板端插座 **J-LCD**：蔚科 **04900-04000-12030**（`FPC CONNECTOR_26_0.5mm`，footprint `26PIN_FPCZ`，仅用 pin 1～22）  
+- 接线：**仅 C6** — [TFT020B107-C0_C6_GPIO.md](../hardware/datasheets/TFT020B107-C0_C6_GPIO.md)、[sp1_lcd.md](../hardware/schematic/sp1_lcd.md)  
+- 单板优势：FPC 与 C6 同板，无跨板 8080 走线约束  
+
+---
+
+## C6 UI 与 Pad 矩阵（方案 A，v1.3）
+
+| 器件 | 职责 |
+|------|------|
+| **RP2350A（U7）** | **5×6 Choc** 矩阵 GPIO 扫描、Pad 引擎 / I2S 低延迟触发 |
+| **ESP32-C6-MINI-1** | 8080 + LVGL、I²C 主站（3729）、IPC（UI，非 Pad 热路径） |
+| **IS31FL3729（U18）** | **20** 路键下 LED，8 bit PWM；蔚科库有符号/料 |
+
+- I²C：**U18 = 0x37**（AD=VCC）；**无 TCA9555**。  
+- 矩阵网 **`MAT_C0…5` / `MAT_R0…4`** 自 c6 子页经板内走线接 U7；拓扑 **Choc + 二极管** 不变。  
+- 接线与 GPIO 表：[sp1_rp2350_pad_matrix.md](../hardware/schematic/sp1_rp2350_pad_matrix.md)、[sp1_c6_ui.md](../hardware/schematic/sp1_c6_ui.md)。
+
+---
+
+## 原理图 / PCB 工程
 
 | 路径 | 说明 |
 |------|------|
-| 播放 | Core I2S_DOUT → Codec → 模拟 OUT → Volume → Amp / TRS |
-| 采样 | Mic/Line → Codec ADC → I2S_DIN → Core → NAND |
-| 配置 | Core I2C 写 Codec 寄存器（PGA、路由、HPF） |
-| Volume | **推荐 Periph 纯模拟**（电位器）；可选 I2C 数字增益 |
+| [hardware/kicad/sp-1/](../hardware/kicad/sp-1/) | **主工程** `sp-1.kicad_pro`（原理图 + PCB） |
+| [hardware/schematic/rp2350a_interfaces.md](../hardware/schematic/rp2350a_interfaces.md) | RP2350 存储、I2S、串口、USB |
+| [hardware/BOM_IC.csv](../hardware/BOM_IC.csv) | IC 与连接器清单（`board=SP-1`） |
 
 ---
 
-## I2S 跨板设计要点
+## 布局要点
 
-| 项 | 要求 |
-|----|------|
-| 线数 | 5（MCLK + BCLK + LRCLK + DOUT + DIN） |
-| 等长 | BCLK / LRCLK / DOUT / DIN 组内 ±3 mm |
-| MCLK | 可略长，但远离功放 SW 节点 |
-| 端接 | 一般不需要；邮票孔距离 < 30 mm 时保持默认 CMOS |
-| 地 | Pin 5–8 地针紧邻 I2S 针；Periph 侧 I2S 下方铺地 |
-| 串扰 | I2S 走线远离 Class-D 功放电感 / SW 脚 ≥ 5 mm |
-| 时钟源 | **24.576 MHz 晶振在 Core**，RP2350/S3 输出 MCLK |
-
-> feahi_pico 已在 RP2350 + AIC3104 @ 48 kHz 验证；跨板 I2S 需 DVT-0 测 THD+N / 串扰。
-
-### 2 层外围板的布局规则（方案 C：C6 + 8080 屏 + 音频同板）
-
-```
-┌─────────────────────────────────────────┐
-│  [TFT FPC]──[C6]     [Keys / LED]       │  ← 8080 走线 ≤15 mm
-│                                         │
-│  ┌─ 模拟区 ─────────────────────────┐  │
-│  │ MS1808/4344 ─ VOL ─ Amp ─ Speaker│  │
-│  │   ↕ Mic   TRS IN/OUT  (短走线)     │  │
-│  └──────────────────────────────────┘  │
-│  [I2S 从 CBI 进 → MS1808/4344]           │
-│  [IPC UART 从 CBI 进 → C6]              │
-│  [CBI 邮票孔 — 与 Core 对接]            │
-└─────────────────────────────────────────┘
-```
-
-1. **C6 与 TFT FPC 相邻**，8080 数据线等长 ±5 mm  
-2. **模拟区** 占 Periph 一角：MS1808/MS4344 + LDO + Mic + TRS + Amp  
-3. **I2S 从 CBI 边缘直线到 MS1808/MS4344**，不绕经功放或 LCD  
-4. **AGND / DGND** 在 ADC/DAC 下方单点汇合  
-5. 功放 SW 节点 **不放在 I2S / 8080 走线正下方**  
-6. 若 2 层仍困难，可选 **Periph 局部 4 层** 或 **Audio 子板 4L**
+1. **RP2350 ↔ Codec**：I2S 等长包地，优先 ≤30 mm 量级（同板通常足够）。  
+2. **C6 ↔ FPC**：8080 数据/控制线短；背光电源从 5 V 树单独滤波。  
+3. **USB**：J1 → ESD → RP2350，**不要**经 C6；与晶振/时钟远离。  
+4. **模拟**：MS1808/MS4344/功放/TRS 靠板边；数字开关远离 Mic/Line 输入。  
+5. **天线**：C6 模组远离 USB 差分与 D 类功放开关节点。
 
 ---
 
-## 两种核心板（方案 C：均无 C6 / 屏 / Codec）
+## 已废弃文档（仅供考古）
 
-### CORE-B
+以下内容为 **模块化方案 C** 遗留，**勿再用于新设计**：
 
-```
-┌──────────────────────────────────────────┐
-│  RP2350 + PSRAM                          │
-│       │ I2S ×5    SPI NAND    USB-C      │
-└───────┼──────────────────────────────────┘
-        │ CBI-40 v0.3（I2S + IPC UART + MIDI）
-        ▼
-   PERIPH-1 (C6 + 8080 TFT + MS1808/4344 + UI)
-        ▲
-   IPC UART 在 Periph 上接 C6 ↔ RP2350
-```
+- FEAHI-CBI-40 引脚与机械（原 `hardware/kicad/cbi40_pinout.csv`、`feahi_cbi40_*` 工程）  
+- `coreb_nets.csv` / `periph1_nets.csv` 中的 **CBI Pin** 列（已由 `sp1_nets.csv` 替代）  
+- CORE-A（ESP32-S3 可互换核心板）对照实验  
 
-### CORE-A
-
-```
-┌──────────────────────────────────────────┐
-│  ESP32-S3  I2S + NAND + USB              │
-│  IPC UART 经 CBI 接 Periph 上 C6         │
-└───────┼──────────────────────────────────┘
-        │ CBI-40（相同 I2S + IPC 引脚）
-        ▼
-   PERIPH-1（同一块，C6 仍驱动 8080 屏）
-```
+Git 历史中可查阅完整 CBI 机械规格。
 
 ---
 
-## 4 层核心板层叠（无 Codec 版）
+## 修订记录
 
-| 层 | 内容 |
-|----|------|
-| L1 | MCU 模组、PSRAM、去耦 |
-| L2 | 完整地 |
-| L3 | 3V3、USB 差分、**I2S 至邮票孔** |
-| L4 | NAND、USB-C、24.576 MHz 晶振、邮票孔 |
-
----
-
-## 电源
-
-| 轨 | 位置 | 负载 |
-|----|------|------|
-| VBAT | Periph 电池 → CBI → Core | Core DCDC |
-| 3.3 V | Core LDO → CBI | C6、MS1808/MS4344 数字 |
-| AVDD / MICBIAS | **Periph LDO** | MS1808 模拟（靠近芯片） |
-| 5 V | **Periph Boost** | 功放、LCD 背光（LEDA） |
-
----
-
-## 方案对比：C6+屏 在 Core vs 在 Periph（方案 C）
-
-| 维度 | C6+SPI 屏在 Core（旧） | **C6+8080 屏在 Periph（现方案）** |
-|------|------------------------|-----------------------------------|
-| LCD 接口 | SPI 6 线可跨 CBI | **8080 13+ 线，必须板内** |
-| IPC | Core 内 C6↔RP2350 | **UART 跨 CBI（2 线）** |
-| 模拟走线 | 跨板或 Core 带 Codec | **Periph 板内短走线** |
-| A/B 对照 | UI 随 Core 变 | **Periph 固定，更公平** |
-| Core 面积 | 较大（双 MCU） | **更小（单音频 MCU）** |
-| Periph 复杂度 | 低 | **高（C6+屏+音频+键）** |
-
----
-
-## 开发验证顺序
-
-| 阶段 | 内容 |
-|------|------|
-| **DVT-0** | Core 飞线 I2S 至 Periph Codec 裸板；48 kHz loopback + THD 摸底 |
-| **DVT-1** | CBI-40 邮票孔 I2S 连通 + USB Audio |
-| **DVT-2** | 全 Periph（Mic 采样、Line IN、Amp、TRS） |
-| **DVT-A** | 换 CORE-A，PERIPH-1 不变，对比 CPU 占用与 glitch |
-
----
-
-## 待决事项
-
-| # | 问题 | 倾向 |
-|---|------|------|
-| 1 | Volume：模拟电位器 vs I2C 数字增益 | **Periph 模拟**，简单可靠 |
-| 2 | Periph 2 层是否够用 | 先 2L + 规则；不过关则 **Audio 区改 4L** |
-| 3 | ADC/DAC | **MS1808 + MS4344**（已定） |
-| 4 | C6 8080 GPIO | **v0.1 已冻结**，见 [c6_gpio.csv](../hardware/schematic/c6_gpio.csv) |
-| 5 | IPC 物理层 | **UART 921600**（CBI Pin 18–19） |
-
----
-
-## 器件规格书
-
-归档于 [hardware/datasheets/](../hardware/datasheets/)：
-
-| 器件 | 文件 | 说明 |
+| 版本 | 日期 | 说明 |
 |------|------|------|
-| TFT020B107-C0 | [JME-01_TFT020B107-C0_LCD.pdf](../hardware/datasheets/JME-01_TFT020B107-C0_LCD.pdf) | 2" 240×320，ST7789，**8080 并口** |
-| MS1808 | [MS1808_ADC.pdf](../hardware/datasheets/MS1808_ADC.pdf) | 24-bit ADC，8–96 kHz |
-| MS4344 | [MS4344_DAC.pdf](../hardware/datasheets/MS4344_DAC.pdf) | 24-bit DAC，至 192 kHz |
-
-> **方案 C 已定：** 量产屏 TFT020B107-C0 为 **8080 并口**，C6 与屏同在 PERIPH-1；CBI v0.3 不再预留 LCD 引脚。
-
-## 原理图框架
-
-块级 KiCad 10 分层原理图 + CSV 网表（占位符号，待换库元件）：
-
-- [hardware/schematic/README.md](../hardware/schematic/README.md)
-- [c6_gpio.csv](../hardware/schematic/c6_gpio.csv) — C6 引脚分配 v0.1
-- [coreb_nets.csv](../hardware/schematic/coreb_nets.csv) / [periph1_nets.csv](../hardware/schematic/periph1_nets.csv)
-
-| 子页 (CORE-B) | 子页 (PERIPH-1) |
-|---------------|-----------------|
-| MCU / NAND / USB / Power / CBI40 | C6 / LCD / Audio / UI / Power / Conn / CBI40 |
-
-重新生成：
-
-```powershell
-py -3 hardware/kicad/tools/generate_schematic_framework.py
-py -3 hardware/kicad/tools/generate_cbi40_templates.py
-```
-
-## KiCad PCB 模板
-
-- [hardware/kicad/README.md](../hardware/kicad/README.md)
-- [feahi_cbi40_core/](../hardware/kicad/feahi_cbi40_core/) · [feahi_cbi40_periph/](../hardware/kicad/feahi_cbi40_periph/)
-- [cbi40_pinout.csv](../hardware/kicad/cbi40_pinout.csv)
-
-## 相关文档
-
-- [architecture.md](./architecture.md)
-- [feahi_pico 播放路径](../../feahi_pico/docs/play-path.md)
+| v0.1 | 2026-09-18 | 模块化 CORE-B + PERIPH-1 + CBI-40 |
+| **v0.2** | **2026-09-19** | **改为 SP-1 单板；取消核心板/叠焊** |
+| **v0.3** | **2026-09-22** | **C6 UI：TCA9555 + IS31FL3729；TFT020B107 + 蔚科 26P FPC 座** |
+| **v0.4** | **2026-09-23** | **方案 A：Pad 矩阵迁 RP2350 GPIO；移除 TCA9555** |

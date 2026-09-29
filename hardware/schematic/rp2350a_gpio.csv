@@ -1,0 +1,51 @@
+# RP2350A Bank0 GPIO — v2.0 草案（见 rp2350a_gpio_plan.md）
+# status: frozen=已定 | v2=本表目标 | dnp=可选不贴
+net,rp2350_pad,gpio,dir,connect_to,hw_function,firmware_notes,status
+XTL_IN,XIN,—,in,Y1 12.288MHz,主时钟,PICO_XOSC_FREQ_HZ=12288000,frozen
+XTL_OUT,XOUT,—,out,Y1 12.288MHz,,,frozen
+SWD_CLK,SWCLK,—,in/out,Tag-Connect,调试,,frozen
+SWD_IO,SWDIO,—,in/out,Tag-Connect,调试,,frozen
+RUN,RST,—,in,复位 RC,复位,,frozen
+USB_DP,USB_DP,—,in/out,J1 USB-C D+,USB Device,,frozen
+USB_DM,USB_DM,—,in/out,J1 USB-C D-,USB Device,,frozen
+QSPI_FLASH_CS,QSPI_CSn,—,out,W25Q32 #CS,XIP CS0 + BOOTSEL,,frozen
+QSPI_SCK,QSPI_SCK,—,out,Flash+PSRAM,共线,,frozen
+QSPI_IO0,QSPI_SD0,—,bidir,Flash+PSRAM,共线,,frozen
+QSPI_IO1,QSPI_SD1,—,bidir,Flash+PSRAM,共线,,frozen
+QSPI_IO2,QSPI_SD2,—,bidir,Flash+PSRAM,共线,,frozen
+QSPI_IO3,QSPI_SD3,—,bidir,Flash+PSRAM,共线,,frozen
+MIDI_TX,GPIO0,0,out,MIDI OUT,UART0 TX,31250,frozen
+MIDI_RX,GPIO1,1,in,MIDI IN,UART0 RX,31250,frozen
+NAND_SCLK,GPIO2,2,out,W25N CLK,SPI1 SCK,v2 自 GP10 迁入,v2
+NAND_MOSI,GPIO3,3,out,W25N DI,SPI1 TX,v2 自 GP11 迁入,v2
+IPC_TX,GPIO4,4,out,C6 IPC_RX,UART1 TX,921600,frozen
+IPC_RX,GPIO5,5,in,C6 IPC_TX,UART1 RX,921600,frozen
+MAT_C0,GPIO6,6,out,c6 矩阵列0,Pad matrix col,,v2
+MAT_C1,GPIO7,7,out,c6 矩阵列1,Pad matrix col,,v2
+PSRAM_CS,GPIO8,8,out,APS6404L CE,QMI CS1n,,frozen
+I2S_DIN,GPIO9,9,in,MS1808 DOUT,PIO I2S SDIN,,frozen
+MAT_R0,GPIO10,10,in,c6 矩阵行0,Pad matrix row,矩阵行 10–14 连续,v2
+MAT_R1,GPIO11,11,in,c6 矩阵行1,Pad matrix row,,v2
+MAT_R2,GPIO12,12,in,c6 矩阵行2,Pad matrix row,,v2
+MAT_R3,GPIO13,13,in,c6 矩阵行3,Pad matrix row,,v2
+MAT_R4,GPIO14,14,in,c6 矩阵行4,Pad matrix row,,v2
+NAND_MISO,GPIO15,15,in,W25N DO,SPI1 RX,,v2
+I2S_BCLK,GPIO16,16,out,Codecs BCLK,PIO I2S,,frozen
+I2S_LRCLK,GPIO17,17,out,Codecs LRCLK,PIO I2S,,frozen
+I2S_DOUT,GPIO18,18,out,MS4344 SDIN,PIO I2S SDOUT,,frozen
+MAT_C2,GPIO19,19,out,c6 矩阵列2,Pad matrix col,,v2
+I2S_MCLK,GPIO20,20,out,Codecs MCLK,CLK_GPOUT0 12.288MHz,,frozen
+MAT_C3,GPIO21,21,out,c6 矩阵列3,Pad matrix col,,v2
+ENC_A,GPIO22,22,in,EC11 A,Rotary A,正交；见 sp1_encoder.md,v2
+MAT_C4,GPIO23,23,out,c6 矩阵列4,Pad matrix col,,v2
+MAT_C5,GPIO24,24,out,c6 矩阵列5,Pad matrix col,,v2
+NAND_CS,GPIO25,25,out,W25N #CS,SPI1 CS,矩阵不占 GP25,v2
+BATT_DET,GPIO26,26,in,电池分压,ADC AIN0,Vadc=Vbat*470/1220；原 EXP_ADC0,v2
+EXP_ADC1,GPIO27,27,in,EC11 B 或 DNP ADC1,ADC AIN1 / ENC_B,方案 5a：优先 ENC_B,v2
+EXP_ADC2,GPIO28,28,in,VR1 中间脚,ADC AIN2,面板电位器 1；100n 滤波,v2.3
+EXP_ADC3,GPIO29,29,in,VR2 中间脚,ADC AIN3,面板电位器 2；100n 滤波,v2.3
+ENC_SW,—,—,—,矩阵 row4 col2,EC11 SW,不占 GPIO；见 sp1_encoder.md,v2
+HP_DETECT,—,—,—,（v2 默认无）,TRS 检测,改 C6 或 DNP 外置,v2-dnp
+SPK_MUTE,—,—,—,（v2 默认无）,Amp ~MUTE,硬件默认开声或 C6,v2-dnp
+STATUS_LED,—,—,—,（取消或改 C6）,板载 LED,,v2-dnp
+AUD_BOOT_NET,—,—,—,BOOT 键,BOOTSEL,QSPI_CSn 网络,frozen

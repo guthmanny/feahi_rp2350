@@ -24,7 +24,7 @@
 | 逻辑电压 | IOVCC 1.65–3.3 V（Typ. 2.8 V） |
 | 工作温度 | -20 ~ +70 ℃ |
 
-**方案 C（已定）：** 量产屏为 **8080 并口，不可更换**。ESP32-C6 与 FPC **同在 PERIPH-1**，8080 走线 **不跨 CBI-40**。CBI v0.3 仅保留 I2S、IPC UART、MIDI 等。
+**SP-1（已定）：** 量产屏为 **8080 并口，不可更换**。ESP32-C6 与 FPC **同在 SP-1 单板**，8080 与 I2S/IPC 均为板内走线。
 
 - 接线草案：[TFT020B107-C0_C6_GPIO.md](TFT020B107-C0_C6_GPIO.md)
 - 驱动：ESP-IDF PARLIO + `esp_lcd_new_panel_st7789()` + LVGL
@@ -65,11 +65,11 @@
 
 ---
 
-## 建议音频链（PERIPH-1）
+## 建议音频链（SP-1 单板）
 
 ```
-Mic / Line IN ──► MS1808 ── I2S ──► CBI I2S_DIN ──► RP2350
-RP2350 ── I2S ──► CBI I2S_DOUT ──► MS4344 ──► VOL ──► Amp / TRS
+Mic / Line IN ──► MS1808 ── I2S ──► RP2350
+RP2350 ── I2S ──► MS4344 ──► VOL ──► Amp / TRS
 ```
 
 MS1808/MS4344 与 MCLK/BCLK/LRCLK 可共用同一 I2S 总线（注意 MS1808 模拟 5 V 与数字 3.3 V 电平）。
@@ -81,4 +81,5 @@ MS1808/MS4344 与 MCLK/BCLK/LRCLK 可共用同一 I2S 总线（注意 MS1808 模
 | 日期 | 说明 |
 |------|------|
 | 2026-09-14 | 从 Downloads 归档三份 PDF |
-| 2026-09-14 | 方案 C 定案：8080 屏 + C6 在 PERIPH-1，CBI v0.3 |
+| 2026-09-14 | 8080 屏 + C6 同板（原 PERIPH-1 方案） |
+| 2026-09-19 | 文档对齐 SP-1 单板，取消 CBI-40 |

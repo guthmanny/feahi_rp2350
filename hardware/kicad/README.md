@@ -1,89 +1,57 @@
-# FEAHI-CBI-40 KiCad 模板
+# SP-1 KiCad 工程
 
-KiCad **10.x** 机械模板，对应 [docs/hardware.md](../../docs/hardware.md) 中的 **FEAHI-CBI-40-MECH v1.0**。
+KiCad **10.x** 硬件源文件。
 
-> PCB 格式：`version 20260206`，KiCad 10 网表为 `(net "name")` 按名引用，无顶层 `(net 0 "")` 列表。
+## 主工程（量产）
 
-## 工程列表
+| 目录 | 说明 |
+|------|------|
+| **[sp-1/](sp-1/)** | **SP-1 单板** — `sp-1.kicad_pro`（原理图 + PCB） |
 
-| 目录 | 说明 | 层数 |
-|------|------|------|
-| [feahi_cbi40_core/](feahi_cbi40_core/) | CORE-B 原理图框架 + PCB 外形 + CBI 邮票孔 | 4L |
-| [feahi_cbi40_periph/](feahi_cbi40_periph/) | PERIPH-1 原理图框架 + PCB + CBI 焊盘 | 2L |
+根页子图：`MIDI` · `core` · **`C6`**（`c6.kicad_sch`）· **`audio`**（`audio.kicad_sch`，MS1808/MS4344/功放）
 
-原理图网表与 C6 GPIO：[../schematic/README.md](../schematic/README.md)
+硬件说明：[docs/hardware.md](../../docs/hardware.md) · 网表：[../schematic/sp1_nets.csv](../schematic/sp1_nets.csv)
 
 ## 项目符号库
 
 | 路径 | 说明 |
 |------|------|
 | [libs/symbols/feahi.kicad_sym](libs/symbols/feahi.kicad_sym) | **PCM1808** / **MS1808**（TSSOP-14 ADC）、**OR-M611**（SO-5 MIDI 光耦） |
-| `feahi_cbi40_*/sym-lib-table` | 工程已链接上述库 |
+| [libs/symbols/integrated_circuits.kicad_sym](libs/symbols/integrated_circuits.kicad_sym) | **SGM8276/8278**、**W25Q32JVSSIQ** 等（git 跟踪） |
+| `sp-1/sym-lib-table` | **双库 IC**：见下表 |
 
-原理图按 **`A`** 搜索 `feahi:OR-M611`、`feahi:MS1808` 或 `feahi:PCM1808`。
+### 符号库双库（`sp-1/sym-lib-table`）
 
-从参考 sch 重新提取符号：
+| 库名 | 路径 | 用途 |
+|------|------|------|
+| **`Integrated_circuits_feahi`** | `${KIPRJMOD}/../libs/symbols/integrated_circuits.kicad_sym` | 工程已用、蔚科库缺失或需版本固定的 IC（**SGM8276/8278** 等） |
+| **`Integrated_circuits`** | 本机蔚科 `Integrated_circuits.kicad_sym`（默认 `~/kicad/library/…`） | 全库选元件；`MP2637`、`MS1808` 等仍用 `Integrated_circuits:…` |
+| **`feahi`** | `libs/symbols/feahi.kicad_sym` | 项目专用符号 |
+| **`MCU_RaspberryPi`** | `sp-1/mcu_raspberrypi.kicad_sym` | RP2350 |
 
-```powershell
-py -3 hardware\kicad\tools\extract_pcm1808_symbol.py
-```
+新同事：克隆仓库即可解析 **feahi** 库；蔚科全库路径在 `sym-lib-table` 第二行按本机修改。缺符号时优先 **import 进 `integrated_circuits.kicad_sym`** 并改 `lib_id` 为 `Integrated_circuits_feahi:…`。
 
-## 打开方式
+## 已废弃（模块化 CBI-40，仅归档）
 
-1. 安装 [KiCad 10](https://www.kicad.org/download/)（或 9.x 可能需升级文件格式）  
-2. **File → Open Project** → 选择对应目录下的 `.kicad_pro`  
-3. 打开 **PCB Editor** 查看板框与 `J1`（CBI-40）
-
-## 板内对象
-
-| 位号 | 内容 |
+| 目录 | 说明 |
 |------|------|
-| **J1** | CBI-40：Core 为底边邮票孔 + 内排 PTH；Periph 为顶面 SMD 焊盘 |
-| **MH** | 4× M2 定位孔 (3,3) (47,3) (3,33) (47,33) mm |
-| **Edge.Cuts** | 50×36 mm，左上 1.5 mm 防呆切角 |
-| **Dwgs.User** | Periph 上 Core Bay 50×36 禁布参考框 |
+| [feahi_cbi40_core/](feahi_cbi40_core/) | 原 CORE-B 模板 + CBI 邮票孔 |
+| [feahi_cbi40_periph/](feahi_cbi40_periph/) | 原 PERIPH-1 模板 |
+| [cbi40_pinout.csv](cbi40_pinout.csv) | 历史引脚表，**新设计勿引用** |
 
-## 坐标系
+打开归档工程：**File → Open Project** → 对应 `.kicad_pro`。
 
-- 原点 **(0,0)**：板 **左下角**（邮票孔底边）
-- **Pin 1**：左下外排，丝印 `Pin1 ◄`，焊盘方角（Core pad 1 rect）
-- 视图：Core 编辑时建议看 **Bottom** 层（邮票孔面）
-
-## 重新生成
-
-修改引脚表或尺寸后：
+重新生成 CBI 模板（一般不需要）：
 
 ```powershell
 py -3 hardware\kicad\tools\generate_cbi40_templates.py
 py -3 hardware\kicad\tools\generate_schematic_framework.py
 ```
 
-## 下一步（在模板基础上）
+## SP-1 单板布局要点
 
-### Core 板
-
-1. **Board Setup → Physical Stackup**：确认 4 层与厚度 1.6 mm  
-2. 放置 RP2350 / S3 / NAND / USB-C（**无 C6、无 LCD**）  
-3. 自 **J1** 拉线；I2S + IPC UART 等长 ±3 mm  
-4. 确认 **Edge.Cuts 底边** 穿过外排邮票孔中心（castellation）  
-5. DRC → Gerber；备注 `castellated half-hole on bottom edge`
-
-### Periph 板
-
-1. **J1 焊盘区禁止器件**（高度 ≤ 0.5 mm）  
-2. **C6 + TFT FPC** 相邻，8080 走线 ≤15 mm（**不经过 J1**）  
-3. MS1808/MS4344 放在 J1 前方 ≤15 mm，I2S 直线连接  
-4. 功放远离 I2S / 8080 ≥8 mm  
-
-## 引脚表
-
-见 [cbi40_pinout.csv](cbi40_pinout.csv)。
-
-## 与 PCB 厂沟通
-
-```
-Board: FEAHI-CBI-40 Core / Periph
-Thickness: 1.6 mm +/- 0.12 mm
-Core bottom edge: plated half-holes (castellation), 20 pads, 2.54 mm pitch
-Finish: ENIG
-```
+1. **Board Setup**：推荐 **4 层**，1.6 mm  
+2. **USB-C J1** → ESD → RP2350；VBUS → PMIC；与 C6 天线区隔离  
+3. **C6 + TFT FPC** 相邻，8080 走线短  
+4. **RP2350 ↔ Codec** I2S 等长包地；模拟区靠板边  
+5. DRC → Gerber
