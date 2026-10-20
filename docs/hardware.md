@@ -66,7 +66,7 @@
 | **TRS / MIDI 插座** | 模拟/串口在板内；MIDI UART **经 CBI** 接 Core |
 | **电池 + 充电 USB-C** | PMIC，VBAT 上送 Core |
 
-8080 屏连接草案：[hardware/datasheets/TFT020B107-C0_C6_GPIO.md](../hardware/datasheets/TFT020B107-C0_C6_GPIO.md)
+8080 屏连接草案：[hardware/profiles/b-c6/datasheets/TFT020B107-C0_C6_GPIO.md](../hardware/profiles/b-c6/datasheets/TFT020B107-C0_C6_GPIO.md)
 
 **方案 C 理由（量产屏 TFT020B107 为 8080，不可换）：**
 
@@ -507,20 +507,20 @@ Periph Top View（示意，外轮廓 TBD）
 | 1 | Volume：模拟电位器 vs I2C 数字增益 | **Periph 模拟**，简单可靠 |
 | 2 | Periph 2 层是否够用 | 先 2L + 规则；不过关则 **Audio 区改 4L** |
 | 3 | ADC/DAC | **MS1808 + MS4344**（已定） |
-| 4 | C6 8080 GPIO | **v0.1 已冻结**，见 [c6_gpio.csv](../hardware/schematic/c6_gpio.csv) |
+| 4 | C6 8080 GPIO | **v0.1 已冻结**，见 [c6_gpio.csv](../hardware/profiles/b-c6/schematic/c6_gpio.csv) |
 | 5 | IPC 物理层 | **UART 921600**（CBI Pin 18–19） |
 
 ---
 
 ## 器件规格书
 
-归档于 [hardware/datasheets/](../hardware/datasheets/)：
+归档于 [hardware/profiles/b-c6/datasheets/](../hardware/profiles/b-c6/datasheets/)：
 
 | 器件 | 文件 | 说明 |
 |------|------|------|
-| TFT020B107-C0 | [JME-01_TFT020B107-C0_LCD.pdf](../hardware/datasheets/JME-01_TFT020B107-C0_LCD.pdf) | 2" 240×320，ST7789，**8080 并口** |
-| MS1808 | [MS1808_ADC.pdf](../hardware/datasheets/MS1808_ADC.pdf) | 24-bit ADC，8–96 kHz |
-| MS4344 | [MS4344_DAC.pdf](../hardware/datasheets/MS4344_DAC.pdf) | 24-bit DAC，至 192 kHz |
+| TFT020B107-C0 | [JME-01_TFT020B107-C0_LCD.pdf](../hardware/profiles/b-c6/datasheets/JME-01_TFT020B107-C0_LCD.pdf) | 2" 240×320，ST7789，**8080 并口** |
+| MS1808 | [MS1808_ADC.pdf](../hardware/profiles/b-c6/datasheets/MS1808_ADC.pdf) | 24-bit ADC，8–96 kHz |
+| MS4344 | [MS4344_DAC.pdf](../hardware/profiles/b-c6/datasheets/MS4344_DAC.pdf) | 24-bit DAC，至 192 kHz |
 
 > **方案 C 已定：** 量产屏 TFT020B107-C0 为 **8080 并口**，C6 与屏同在 PERIPH-1；CBI v0.3 不再预留 LCD 引脚。
 
@@ -528,9 +528,9 @@ Periph Top View（示意，外轮廓 TBD）
 
 块级 KiCad 10 分层原理图 + CSV 网表（占位符号，待换库元件）：
 
-- [hardware/schematic/README.md](../hardware/schematic/README.md)
-- [c6_gpio.csv](../hardware/schematic/c6_gpio.csv) — C6 引脚分配 v0.1
-- [coreb_nets.csv](../hardware/schematic/coreb_nets.csv) / [periph1_nets.csv](../hardware/schematic/periph1_nets.csv)
+- [hardware/profiles/b-c6/schematic/README.md](../hardware/profiles/b-c6/schematic/README.md)
+- [c6_gpio.csv](../hardware/profiles/b-c6/schematic/c6_gpio.csv) — C6 引脚分配 v0.1
+- [coreb_nets.csv](../hardware/profiles/b-c6/schematic/coreb_nets.csv) / [periph1_nets.csv](../hardware/profiles/b-c6/schematic/periph1_nets.csv)
 
 | 子页 (CORE-B) | 子页 (PERIPH-1) |
 |---------------|-----------------|
@@ -539,15 +539,15 @@ Periph Top View（示意，外轮廓 TBD）
 重新生成：
 
 ```powershell
-py -3 hardware/kicad/tools/generate_schematic_framework.py
-py -3 hardware/kicad/tools/generate_cbi40_templates.py
+py -3 hardware/profiles/b-c6/kicad/tools/generate_schematic_framework.py
+py -3 hardware/profiles/b-c6/kicad/tools/generate_cbi40_templates.py
 ```
 
 ## KiCad PCB 模板
 
-- [hardware/kicad/README.md](../hardware/kicad/README.md)
-- [feahi_cbi40_core/](../hardware/kicad/feahi_cbi40_core/) · [feahi_cbi40_periph/](../hardware/kicad/feahi_cbi40_periph/)
-- [cbi40_pinout.csv](../hardware/kicad/cbi40_pinout.csv)
+- [hardware/profiles/b-c6/kicad/README.md](../hardware/profiles/b-c6/kicad/README.md)
+- [sp1_cbi40_core/](../hardware/profiles/b-c6/kicad/sp1_cbi40_core/) · [sp1_cbi40_periph/](../hardware/profiles/b-c6/kicad/sp1_cbi40_periph/)
+- [cbi40_pinout.csv](../hardware/profiles/b-c6/kicad/cbi40_pinout.csv)
 
 ## 相关文档
 

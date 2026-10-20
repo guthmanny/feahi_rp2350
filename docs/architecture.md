@@ -40,6 +40,8 @@
 | 上位机 Library 管理 | C6 | USB 或 WiFi |
 | IPC | RP2350 ↔ C6 | **UART 经 CBI**（Pin 18–19），921600 baud |
 
+IPC 消息表亦见 [spec/ipc.md](../spec/ipc.md)。
+
 ## IPC 消息（草案）
 
 ### C6 → RP2350
@@ -84,5 +86,5 @@
 
 软件架构对应 **CORE-B** + **PERIPH-1（方案 C）**；可替换 **CORE-A**（ESP32-S3）做对照，**Periph 不变**（C6 仍负责 UI）。
 
-- 8080 接线草案：[hardware/datasheets/TFT020B107-C0_C6_GPIO.md](../hardware/datasheets/TFT020B107-C0_C6_GPIO.md)
+- 8080 接线草案：[hardware/profiles/b-c6/datasheets/TFT020B107-C0_C6_GPIO.md](../hardware/profiles/b-c6/datasheets/TFT020B107-C0_C6_GPIO.md)
 - 完整硬件说明：[hardware.md](./hardware.md)
