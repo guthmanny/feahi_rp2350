@@ -10,3 +10,5 @@
 连接器机械代号 **FEAHI-CBI-40** 仅用于 b-c6 模块化方案。
 
 产品级说明：[docs/hardware.md](../docs/hardware.md)
+
+逻辑 Pad/LED 语义见 [spec/intents.md](../spec/intents.md)；本目录各 profile 负责 **binding**（物理 → 语义），模板见 [spec/binding-template.md](../spec/binding-template.md)。
