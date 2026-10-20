@@ -1,0 +1,31 @@
+(sym_lib_table
+	(version 7)
+	(lib
+		(name "Integrated_circuits_feahi")
+		(type "KiCad")
+		(uri "${KIPRJMOD}/../libs/symbols/integrated_circuits.kicad_sym")
+		(options "")
+		(descr "SP-1 工程 IC：W25Q32J(F)VSSIQ 等")
+	)
+	(lib
+		(name "Integrated_circuits")
+		(type "KiCad")
+		(uri "${KIPRJMOD}/../libs/symbols/integrated_circuits.kicad_sym")
+		(options "")
+		(descr "SP-1 工程 IC，与 Integrated_circuits_feahi 同一文件")
+	)
+	(lib
+		(name "feahi")
+		(type "KiCad")
+		(uri "${KIPRJMOD}/../libs/symbols/feahi.kicad_sym")
+		(options "")
+		(descr "FEAHI 项目符号")
+	)
+	(lib
+		(name "MCU_RaspberryPi")
+		(type "KiCad")
+		(uri "${KIPRJMOD}/mcu_raspberrypi.kicad_sym")
+		(options "")
+		(descr "Raspberry Pi RP2350A/B")
+	)
+)

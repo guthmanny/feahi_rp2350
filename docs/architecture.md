@@ -84,7 +84,7 @@ IPC 消息表亦见 [spec/ipc.md](../spec/ipc.md)。
 
 ## 硬件
 
-软件架构对应 **CORE-B** + **PERIPH-1（方案 C）**；可替换 **CORE-A**（ESP32-S3）做对照，**Periph 不变**（C6 仍负责 UI）。
+**量产**为 [单板 SP-1](../hardware/profiles/sp-1/)（RP2350 + C6 同板）；本仓另保留 [b-c6 模块化模板](../hardware/profiles/b-c6/)（CORE-B + PERIPH-1 + CBI-40）作对照与归档。
 
 - 8080 接线草案：[hardware/profiles/b-c6/datasheets/TFT020B107-C0_C6_GPIO.md](../hardware/profiles/b-c6/datasheets/TFT020B107-C0_C6_GPIO.md)
 - 完整硬件说明：[hardware.md](./hardware.md)

@@ -37,12 +37,21 @@ managed_components/
 # KiCad local / backup
 *.lck
 *-backups/
+_restore_backup_*/
+.mcp-backups/
 *.bak
 *.kicad_pcb-bak
 *.kicad_sch-bak
+*.kicad_prl
 .history/
 **/fp-info-cache
 **/sym-lib-table.bak
+*-erc.rpt
+*-erc.json
+*_erc.json
+*-drc.rpt
+*_drc_violations.json
+*_statistics.rpt
 
 # Python
 __pycache__/
