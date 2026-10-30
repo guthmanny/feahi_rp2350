@@ -1,0 +1,14 @@
+---
+description: SP-1 UI 用 AtomTheme LVGL；与 bleach 画面分离；PC 仿真同屏源码
+alwaysApply: true
+---
+
+# SP-1 UI
+
+完整约定见 `docs/ui.md`。
+
+- bleach 与 SP-1 **不是同一套 UI**。只共享 feahi 契约和 kbuss/NuDSP 音频。bleach 用 AtomTheme **JUCE**；SP-1 用 AtomTheme **LVGL**。
+- 屏幕在 `ui/`，PC 仿真可执行文件在 `ui_sim/`（LVGL+SDL，320×240 RGB565）。C6 只换显示/输入。不要用 JUCE 仿真，不要放进 AtomTheme `demos/` 或 bleach。
+- 用 `atom::lvgl_widgets`（如 `PadGrid`）和 `core/` 样式。`c6_led_bringup/main/ui.c` 是 bring-up，不是产品 UI。
+- 不要把 SP-1 屏幕写进 AtomTheme 或 bleach；不要在 C6 再抄一套 PadGrid。
+- 机械键/旋钮不进 `ui/`。事件在 `panel/`，PC 机壳在 `ui_sim/shell/`。见 `docs/panel.md`。

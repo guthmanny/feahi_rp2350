@@ -42,11 +42,24 @@
 
 旧消息名 `PAD_TRIGGER` 等已对齐为 spec 中的 `PadPress`、`Transport` 等类型名。
 
+## 软件音频引擎
+
+PC 与硬件共用 **kbuss 宿主 + NuDSP 算法**，分层与禁令见 [audio-engine.md](./audio-engine.md)。
+
+`rp2350_sound` 里的整数 `feahi_pad.c` 仅作 bring-up；产品路径是板上 kbuss（静态 `PadSampler`）→ NuDSP。feahi 只做 HAL / 契约，不实现混音或 DSP。
+
+## UI
+
+bleach（JUCE）与 SP-1（LVGL）都用 AtomTheme，**画面不共用**。SP-1 在 PC 用 LVGL 仿真同一份屏幕源码再上 C6。见 [ui.md](./ui.md)。
+
+按键 / 旋钮 / 键下灯是前面板，不是 TFT。PC 仿真用 `panel/` 事件 + `ui_sim/shell` 机壳，见 [panel.md](./panel.md)。
+
 ## feahi 迁移
 
 | 模块 | 来源 | 复用度 |
 |------|------|--------|
-| Pad 引擎 / Port | feahi_pico | ~85% |
+| Pad / 混音 / FX 宿主 | kbuss 嵌入式宿主 + NuDSP | 目标路径；与 bleach 同一套 |
+| Pad 整数 bring-up | `rp2350_sound/src/feahi_pad.c` | 过渡，将被 kbuss 替换 |
 | 音序器契约 | feahi | ~70%（需扩展 Group / Timing） |
 | USB Audio 桥 | feahi_pico | ~70% |
 | Storage Adapter（例：W25N NAND） | feahi_pico | ~85%；介质可换，见 spec |

@@ -1,0 +1,12 @@
+---
+description: SP-1 按键/旋钮仿真走 panel 事件 + ui_sim 机壳，不画进 LVGL 屏
+alwaysApply: true
+---
+
+# SP-1 前面板
+
+完整约定见 `../docs/panel.md`。
+
+- 5×6 键和 EC11 是 RP2350 硬件，不是 TFT 控件。不要在 `ui/` 的 320×240 里加仿真专用旋钮或额外键。
+- 事件模型放仓库根 `panel/`（对齐 `pad_matrix.h`：pad 0–25、ENC_SW=26）。PC 机壳可视化只放 `ui_sim/shell/`，仍链进同一个 `sp1_ui_sim`。
+- 屏上 PadGrid 只显示；真实操控仿真必须发 panel 事件（再进 UI / 以后的 kbuss），与板上 GPIO→IPC 同语义。

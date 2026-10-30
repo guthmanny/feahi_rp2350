@@ -1,0 +1,13 @@
+---
+description: SP-1 音频引擎分层：kbuss 宿主 + NuDSP 算法，禁止平行引擎
+alwaysApply: true
+---
+
+# SP-1 音频引擎
+
+完整约定见仓库根目录 `docs/audio-engine.md`（相对本固件目录为 `../docs/audio-engine.md`）。
+
+- **算法只写 NuDSP**（f32 单元）。不要 `extensions/nudsp_embedded`，不要为 MCU 再抄 EG / sample player。
+- **宿主只用 kbuss**（track、混音、MIDI、参数、`PadSampler`）。PC app 与 SP-1 同一套。板上：`AudioEngine` + StaticPluginFormat + `EmbeddedFrontend`；图在 init 搭死，不上 `.kbplug`。
+- **feahi / 板级固件**只做 I2S、UAC、GPIO、存储、IPC。不实现混音或 DSP。
+- `src/feahi_pad.c` 是 bring-up，不是产品引擎。浮点路径换 kbuss 嵌入式宿主，不要新建 `ebuss`。Flash 不够就瘦 kbuss，不另起炉灶。

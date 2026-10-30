@@ -7,6 +7,8 @@ Soran **SP-1** 采样器与音序器：**产品语义（平台无关）** + **�
 | **RP2350** + PSRAM | 音频引擎、存储、Pad/Seq/FX、USB Audio、MIDI |
 | **ESP32-C6** | 8080 UI、键/灯、BLE/WiFi、IPC（可选拆分） |
 
+音频宿主与算法见 [docs/audio-engine.md](docs/audio-engine.md)（kbuss + NuDSP）。UI 见 [docs/ui.md](docs/ui.md)（AtomTheme LVGL，与 bleach 画面分离）。前面板仿真见 [docs/panel.md](docs/panel.md)。
+
 ## 规范 vs 实现
 
 | 层级 | 位置 | 移植时要什么 |
@@ -26,9 +28,12 @@ Soran **SP-1** 采样器与音序器：**产品语义（平台无关）** + **�
 
 ```
 ├── spec/                 # ★ 产品契约（平台无关）
-├── docs/                 # 架构说明（含参考实现分工）
+├── docs/                 # 架构说明（含 audio-engine / ui / panel）
 ├── hardware/profiles/    # sp-1 单板 · b-c6 模板
-└── targets/rp2350-c6/    # 参考 target
+├── targets/rp2350-c6/    # 参考 target
+├── ui/                   # SP-1 屏幕库（PC 仿真与 C6 共用）
+├── ui_sim/               # PC：LVGL + SDL（LCD）；shell/ 为机壳键钮
+└── panel/                # 前面板事件（pad/encoder/LED），无 GUI
 ```
 
 ## 设计约束（参考单板 SP-1）
@@ -55,6 +60,14 @@ cd ..\c6_host
 # idf.py build
 ```
 
+PC 屏幕 + 机壳仿真：
+
+```bash
+cmake -S ui_sim -B ui_sim/build
+cmake --build ui_sim/build
+./ui_sim/build/sp1_ui_sim
+```
+
 ## KiCad
 
 | Profile | 工程 |
@@ -64,5 +77,8 @@ cd ..\c6_host
 
 ## 文档
 
-- [spec 索引](spec/README.md) · [架构](docs/architecture.md) · [硬件](docs/hardware.md)  
+- [spec 索引](spec/README.md) · [架构](docs/architecture.md) · [硬件](docs/hardware.md)
+- [音频引擎分层（kbuss + NuDSP）](docs/audio-engine.md)
+- [UI 分层（AtomTheme LVGL，与 bleach 分离）](docs/ui.md)
+- [前面板仿真（按键 / 旋钮 / LED）](docs/panel.md)
 - [Pad/Seq（FEAHI）](../feahi/docs/)
