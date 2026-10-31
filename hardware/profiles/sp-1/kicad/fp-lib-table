@@ -1,7 +1,10 @@
 (fp_lib_table
 	(version 7)
-	(lib (name "Switch_Keyboard_Kailh") (type "KiCad") (uri "/home/guthman/myCode/feahi_rp2350/hardware/kicad/libs/footprints/Switch_Keyboard_Kailh.pretty") (options "") (descr "Kailh Choc V2 (kiswitch, vendored) — SP-1 Pad matrix"))
+	(lib (name "Switch_Keyboard_Kailh") (type "KiCad") (uri "${KIPRJMOD}/../libs/footprints/Switch_Keyboard_Kailh.pretty") (options "") (descr "Kailh Choc V2 (kiswitch, vendored) — SP-1 Pad matrix"))
 	(lib (name "Package_DFN_QFN_feahi") (type "KiCad") (uri "${KIPRJMOD}/../libs/footprints/Package_DFN_QFN_feahi.pretty") (options "") (descr "FEAHI QFN-32 for IS31FL3729"))
+	(lib (name "Package_TO_SOT_SMD_feahi") (type "KiCad") (uri "${KIPRJMOD}/../libs/footprints/Package_TO_SOT_SMD_feahi.pretty") (options "") (descr "FEAHI TSOT-23-8 pad tweaks (0.2 mm clearance)"))
+	(lib (name "Package_SO_feahi") (type "KiCad") (uri "${KIPRJMOD}/../libs/footprints/Package_SO_feahi.pretty") (options "") (descr "FEAHI MSOP/VSSOP pad tweaks (0.2 mm clearance)"))
+	(lib (name "LED_SMD_feahi") (type "KiCad") (uri "${KIPRJMOD}/../libs/footprints/LED_SMD_feahi.pretty") (options "") (descr "FEAHI LEDs (LTST-C235 top-mount, no NPTH)"))
 	(lib (name "Connectors") (type "KiCad") (uri "/home/guthman/kicad/library/Connectors.pretty") (options "") (descr "蔚科 Connectors 封装 (KiCad .pretty)"))
 	(lib (name "Integrated_circuits") (type "Altium Designer") (uri "/home/guthman/kicad/library/Integrated_circuits.IntLib") (options "") (descr "蔚科 Integrated_circuits 封装"))
 	(lib (name "Mechanical") (type "Altium Designer") (uri "/home/guthman/kicad/library/Mechanical.IntLib") (options "") (descr "蔚科 Mechanical 封装"))
